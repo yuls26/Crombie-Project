@@ -1,5 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+/* <= used to be `@tailwind base;`*/
+
+@import "tailwindcss/components";
+/* <= used to be `@tailwind components;` */
+
+@import "tailwindcss/utilities";
+/* <= used to be `@tailwind utilities;` */
 
 /* Puedes agregar estilos globales aquí */
