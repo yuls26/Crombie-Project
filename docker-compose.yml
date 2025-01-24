@@ -11,23 +11,31 @@ services:
       - .:/app
       - /app/node_modules # Evita conflictos de volúmenes con dependencias
     environment:
-      - DATABASE_HOST=mysql-db
+      - DATABASE_HOST=database
       - DATABASE_USER=root
-      - DATABASE_PASSWORD=example
-      - DATABASE_NAME=my_database
+      - DATABASE_PASSWORD=12345
+      - DATABASE_NAME=mydatabase
     depends_on:
-      - mysql-db
+      - database
+    networks:
+      - mynetwork
 
-  mysql-db:
+  database:
     image: mysql:8.0
-    container_name: mysql-db
+    container_name: basededatos
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: example
-      MYSQL_DATABASE: my_database
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: mydatabase
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - mynetwork
 
 volumes:
   mysql_data:
+
+
+networks:
+  mynetwork:

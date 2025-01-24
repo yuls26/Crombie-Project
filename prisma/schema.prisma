@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql" 
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -11,13 +11,13 @@ model User {
   id       Int       @id @default(autoincrement())
   name     String
   email    String    @unique
-  password String    // Para almacenar las contraseñas (deberían estar cifradas)
+  password String // Para almacenar las contraseñas (deberían estar cifradas)
   role     Role      @default(USER) // Campo para roles con un valor predeterminado
   expenses Expense[] // Relación con los gastos
 }
 
 model Expense {
-  id          Int    @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   amount      Float
   description String
   date        DateTime @default(now())

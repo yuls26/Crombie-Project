@@ -2,10 +2,10 @@
 Docker
 
 #build docker
-docker build -t tengo-suenio .
+docker build -t nombre .
 
 #run docker
-docker run -p 3000:3000 tengo-suenio
+docker run -p 3000:3000 nombre
 
 Docker Compose
 
@@ -16,3 +16,6 @@ docker-compose up --build
 
 #run docker
 docker-compose up
+
+#abrir terminal en docker
+docker-compose exec -it nextjs-app sh
