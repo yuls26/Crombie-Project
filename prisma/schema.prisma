@@ -22,7 +22,15 @@ model Expense {
   description String
   date        DateTime @default(now())
   userId      Int
+  categoryId  Int
   user        User     @relation(fields: [userId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique // Nombre
+  expenses Expense[] // Relación con los gastos
 }
 
 enum Role {

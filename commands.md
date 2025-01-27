@@ -19,3 +19,10 @@ docker-compose up
 
 #abrir terminal en docker
 docker-compose exec -it nextjs-app sh
+
+
+#prisma
+- npx prisma migrate dev --name nombre_de_tu_migracion // crear nueva migracion
+- npx prisma migrate dev --create-only // crear migracion vacia
+- npx prisma migrate deploy // deploy
+- npx prisma generate // actualizar la db
