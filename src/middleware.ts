@@ -18,7 +18,7 @@ export function middleware(request: NextRequest) {
 
     // console.log(token);
 
-    return NextResponse.redirect(new URL("/main", request.url));
+    return NextResponse.next();
 }
 
 // Apply middleware to specific routes

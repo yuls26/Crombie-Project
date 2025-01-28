@@ -10,14 +10,14 @@ export default function MainPage() {
   const { data: session } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    // Redirigir si no está logueado
-    if (!session) {
-      router.push("/login");
-    }
+  //   // Redirigir si no está logueado
+  //   if (!session) {
+  //     router.push("/login");
+  //   }
 
-  }, []);
+  // }, []);
 
   return (
     <div className="text-center bg-blue-600 p-6">
