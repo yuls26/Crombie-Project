@@ -9,14 +9,11 @@ export default function Component() {
 
     if (session) {
         return (
-
-
             <>
                 Signed in as {session.user?.email} <br />
-                <button onClick={() => signOut()}>Sign out</button>
+                {/* Redirige al usuario a la página de inicio después de cerrar sesión */}
+                <button onClick={() => signOut({ callbackUrl: '/' })}>Sign out</button>
             </>
-
-
         )
     }
     return (
