@@ -9,19 +9,22 @@ export function middleware(request: NextRequest) {
     const isHomePage = request.nextUrl.pathname.startsWith("/");
 
     if (!token && (!isAuthPage || !isHomePage)) {
+
+        // console.log(token);
+
         // Redirect to login if not authenticated
         return NextResponse.redirect(new URL("/login", request.url));
-    } else {
-        console.log('aaaaaaa');
     }
 
-    return NextResponse.redirect(new URL("/", request.url));
+    // console.log(token);
+
+    return NextResponse.redirect(new URL("/main", request.url));
 }
 
 // Apply middleware to specific routes
 export const config = {
     matcher: [
         "/test",
-        // "/dashboard"
+        "/main"
     ],
 };

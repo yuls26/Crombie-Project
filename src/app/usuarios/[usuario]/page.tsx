@@ -1,81 +1,69 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+// app/usuarios/[usuario]/page.tsx
+
+import { useState, useEffect } from 'react';
+import Filters from '../../components/Filter';
+import { fetchExpenses } from '../../services/services';  // Asumiendo que tienes un servicio para obtener los gastos
 
 interface UserPageProps {
   params: {
-    usuario: string; // Este sería el identificador del usuario
+    usuario: string;
   };
 }
 
-interface Expense {
-  id: number;
-  amount: number;
-  description: string;
-  date: string;
+interface ExpenseInterface {
+  id: number,
+  amount: number,
+  description: string,
+  date: Date | undefined,
+  userId: number,
+  categoryId: number
 }
 
-export default function UserPage({ params }: UserPageProps) {
-  const [gastos, setGastos] = useState<Expense[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const UserPage = ({ params }: UserPageProps) => {
+  const [expenses, setExpenses] = useState(Array<ExpenseInterface>);
+  const [filters, setFilters] = useState({
+    category: '',
+    startDate: '',
+    endDate: '',
+  });
 
+  // Función para manejar los cambios en los filtros
+  const handleFilterChange = (newFilters: { category: string; startDate: string; endDate: string }) => {
+    setFilters(newFilters);
+  };
+
+  // Fetch de los gastos con los filtros
   useEffect(() => {
-    const fetchGastos = async () => {
-      try {
-        const response = await fetch(`/api/usuarios/${params.usuario}/gastos`);
-        if (!response.ok) {
-          throw new Error('Error al cargar los gastos del usuario.');
-        }
-        const data = await response.json();
-        setGastos(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    const getExpenses = async () => {
+      const response = await fetchExpenses(filters);
+      let a = response.map(e =>
+        e as unknown as ExpenseInterface
+      );
+
+      setExpenses(a);
     };
-
-    fetchGastos();
-  }, [params.usuario]);
-
-  if (loading) {
-    return <p>Cargando los datos...</p>;
-  }
-
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+    getExpenses();
+  }, [filters]);
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold">Usuario: {params.usuario}</h1>
-      <p className="text-lg text-gray-600">
-        Aquí puedes ver y gestionar tus gastos, {params.usuario}.
-      </p>
+    <div>
+      <h1 className="text-3xl font-bold">Gastos de {params.usuario}</h1>
 
-      {gastos.length > 0 ? (
-        <ul className="mt-4 space-y-2">
-          {gastos.map((gasto) => (
-            <li
-              key={gasto.id}
-              className="p-4 border rounded shadow hover:bg-gray-100"
-            >
-              <p>
-                <strong>Descripción:</strong> {gasto.description}
-              </p>
-              <p>
-                <strong>Monto:</strong> ${gasto.amount.toFixed(2)}
-              </p>
-              <p>
-                <strong>Fecha:</strong> {new Date(gasto.date).toLocaleDateString()}
-              </p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No hay gastos registrados para este usuario.</p>
-      )}
+      {/* Agregar el componente de filtros */}
+      <Filters onFilterChange={handleFilterChange} />
+
+      {/* Mostrar los gastos filtrados */}
+      <ul>
+        {expenses.map((expense) => (
+          <li key={expense.id}>
+            <p>{expense?.description} - ${expense?.amount}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
-}
+};
+
+export default UserPage;
