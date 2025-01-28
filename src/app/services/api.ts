@@ -59,7 +59,7 @@ export const updateCategory = async (id: number, category: Category): Promise<Ca
 
 export const deleteCategory = async (id: number): Promise<void> => {
     await fetch(`${API_URL}/categories/delete/${id}`, {
-        method: 'DELETE',
+        method: 'GET',
     });
 };
 
@@ -101,6 +101,6 @@ export const updateExpense = async (id: number, expense: Expense): Promise<Expen
 
 export const deleteExpense = async (id: number): Promise<void> => {
     await fetch(`${API_URL}/expenses/delete/${id}`, {
-        method: 'DELETE',
+        method: 'GET',
     });
 };
