@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from "next-auth/react";
 import ExpenseForm from '../components/ExpenseForm2';
 import ExpenseList from '../components/ExpenseList2';
-import { getCategories, getExpensesByUser, Category, Expense, createExpense } from '../services/api';
+import { getCategories, getExpensesByUser, Category, Expense, createExpense, deleteExpense } from '../services/api';
 
 const Page = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -59,9 +59,21 @@ const Page = () => {
     addExpenseOnDb({ ...newExpense, userId: session.user.id });
   };
 
-  useEffect(() => {
-    console.log('page: ', expenses);
-  }, [expenses]);
+  const deleteExpenseOnDb = async (id: number) => {
+
+    const expenseCreated = await deleteExpense(id);
+
+    const newExpensesList = Array.isArray(expenses) ? expenses.filter(e => e.id != id) : [];
+
+    setExpenses(newExpensesList);
+
+  };
+
+  const handleDeleteExpense = (id: number) => {
+    // Guardar el nuevo gasto
+    // @ts-ignore
+    deleteExpenseOnDb(id);
+  };
 
   return (
     <div className="text-center bg-blue-600 p-6">
@@ -71,7 +83,7 @@ const Page = () => {
         {!loading && (
           <>
             <ExpenseForm categories={categories} onSave={handleSaveExpense} />
-            <ExpenseList expenses={expenses} onDelete={() => { }} />
+            <ExpenseList expenses={expenses} onDelete={handleDeleteExpense} />
           </>
         )}
         {loading && (<>cargando</>)}
