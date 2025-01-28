@@ -74,7 +74,7 @@ export const getExpenses = async (): Promise<Expense[]> => {
 export const getExpensesByUser = async (id: number): Promise<Expense[]> => {
     const response = await fetch(`${API_URL}/expenses/getByUser/${id}`);
     const data = await response.json();
-    return data;
+    return data.data.expenses;
 };
 
 export const createExpense = async (expense: Omit<Expense, 'id'>): Promise<Expense> => {

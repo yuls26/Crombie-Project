@@ -1,44 +1,83 @@
 'use client'
 
-// app/main/page.tsx o en cualquier otra página donde quieras redirigir
+import { useState, useEffect } from 'react';
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { useEffect } from "react";
+import ExpenseForm from '../components/ExpenseForm2';
+import ExpenseList from '../components/ExpenseList2';
+import { getCategories, getExpensesByUser, Category, Expense, createExpense } from '../services/api';
 
-export default function MainPage() {
+const Page = () => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
   const { data: session } = useSession();
-  const router = useRouter();
 
-  // useEffect(() => {
+  useEffect(() => {
 
-  //   // Redirigir si no está logueado
-  //   if (!session) {
-  //     router.push("/login");
-  //   }
+    if (session) {
 
-  // }, []);
+      // Cargar categorías y gastos al montar el componente
+      const loadCategories = async () => {
+        const fetchedCategories = await getCategories();
+        setCategories(fetchedCategories);
+      };
+
+      const loadExpenses = async () => {
+        // @ts-ignore
+        const fetchedExpenses = await getExpensesByUser(session?.user?.id);
+        setExpenses(fetchedExpenses);
+      };
+
+      loadCategories();
+      loadExpenses();
+
+      setLoading(false);
+    }
+
+  }, [session]);
+
+  const addExpenseOnDb = async (newExpense: Omit<Expense, 'id'>) => {
+
+    const expenseCreated = await createExpense(newExpense);
+
+    if (expenseCreated) {
+      if (expenseCreated) {
+        if (Array.isArray(expenses)) {
+          setExpenses([...expenses, expenseCreated]);
+        } else {
+          setExpenses([expenseCreated]);
+        }
+      }
+
+    }
+  };
+
+  const handleSaveExpense = (newExpense: Omit<Expense, 'id'>) => {
+    // Guardar el nuevo gasto
+    // @ts-ignore
+    addExpenseOnDb({ ...newExpense, userId: session.user.id });
+  };
+
+  useEffect(() => {
+    console.log('page: ', expenses);
+  }, [expenses]);
 
   return (
     <div className="text-center bg-blue-600 p-6">
       <h2 className="text-4xl font-bold mb-4">Bienvenido, {session?.user?.name}</h2>
       <p className="text-lg text-gray-100 mb-6">Comienza a gestionar tus gastos</p>
       <div>
-        <Link
-          href={`/usuarios/${session?.user?.email}`}
-          className="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-600 mb-4"
-        >
-          Ver mis gastos
-        </Link>
-        <Link
-          href="/categorias"
-          className="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-600"
-        >
-          Ver categorías de gastos
-        </Link>
+        {!loading && (
+          <>
+            <ExpenseForm categories={categories} onSave={handleSaveExpense} />
+            <ExpenseList expenses={expenses} onDelete={() => { }} />
+          </>
+        )}
+        {loading && (<>cargando</>)}
       </div>
     </div>
   );
-}
+};
 
-
+export default Page;
