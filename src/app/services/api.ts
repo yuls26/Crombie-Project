@@ -6,14 +6,16 @@ export interface Category {
     name: string;
 }
 
+// api.ts
 export interface Expense {
     id: number;
     description: string;
     amount: number;
     date: string;
-    userId: number;
+    userId: string;  // Cambié de number a string
     categoryId: number;
-}
+  }
+  
 
 export interface User {
     id: number;

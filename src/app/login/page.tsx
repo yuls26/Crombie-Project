@@ -34,41 +34,50 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
-      <h1 className="text-2xl font-bold mb-4">Iniciar Sesión</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white px-6 py-8">
+      <div className="flex justify-center w-full max-w-sm bg-gray-700 p-8 rounded-lg shadow-lg space-y-6">
+        <form onSubmit={handleLogin} className="flex flex-col space-y-4 w-full">
+          <h1 className="text-3xl font-bold mb-6 text-center text-gray-100">Iniciar Sesión</h1>
 
-      {error && <p className="text-red-500">{error}</p>}
+          {error && <p className="text-red-500 mb-4">{error}</p>}
 
-      <form onSubmit={handleLogin} className="flex flex-col space-y-4">
-        <input
-          type="email"
-          placeholder="Correo"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="px-3 py-2 border rounded-md text-black"
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="px-3 py-2 border rounded-md text-black"
-        />
-        <button type="submit" className="bg-blue-600 px-4 py-2 rounded-lg">
-          Ingresar
-        </button>
-      </form>
+          <input
+            type="email"
+            placeholder="Correo"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="px-4 py-2 border border-gray-600 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="px-4 py-2 border border-gray-600 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            className="bg-blue-600 px-6 py-3 rounded-lg text-white font-semibold hover:bg-blue-700 transition-colors duration-200"
+          >
+            Iniciar Sesión
+          </button>
+        </form>
+      </div>
 
-      <p className="mt-4">O inicia sesión con:</p>
+      <p className="mt-6 text-center text-gray-400">O inicia sesión con:</p>
 
       <button
         onClick={() => signIn("github")}
-        className="mt-2 px-4 py-2 bg-gray-800 rounded-lg"
+        className="mt-4 px-8 py-3 bg-blue-500 rounded-lg text-white font-semibold hover:bg-blue-600 transition-colors duration-200"
       >
         GitHub
       </button>
     </div>
   );
 }
+
+
+
+

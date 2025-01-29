@@ -2,31 +2,28 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Obtener todos los usuarios
+// Obtener un gasto
 export async function GET(request, { params }) {
 
-    const paramObject = (await params);
-    const { expenseId } = paramObject; // aqui paraams es undefined
+    const { expenseId } = params;  // Accede directamente a expenseId
 
     try {
 
         const expense = await prisma.expense.findUnique({
             where: {
-                id: Number(expenseId),
+                id: Number(expenseId),  // Usa el expenseId directamente
             },
-        })
+        });
 
-        // Verifica si el usuario fue encontrado
         if (!expense) {
             return new Response(JSON.stringify({ error: "Gasto no encontrado" }), {
                 status: 400,
             });
         }
 
-        // Responder con el usuario encontrado
         return new Response(JSON.stringify({
             data: {
-                expense: expense
+                expense: expense,
             },
             message: "Gasto recuperado con éxito",
         }), {

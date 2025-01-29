@@ -1,43 +1,34 @@
 import { PrismaClient } from "@prisma/client";
-// import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-// Obtener todos los usuarios
-export async function POST(request, { params }) {
+// Actualizar un gasto
+export async function PUT(request, { params }) {
 
-    const paramObject = (await params);
-    const { expenseId } = paramObject;
+    const { expenseId } = params;  // Accede directamente al expenseId
 
-    const postParams = await request.json()
+    const postParams = await request.json();
 
     try {
 
+        // Intentar actualizar el gasto
         const updateExpense = await prisma.expense.update({
             where: {
-                id: Number(expenseId),
+                id: Number(expenseId),  // Usa el expenseId correctamente
             },
             data: {
                 amount: postParams?.amount || 0,
                 description: postParams?.description || '',
                 userId: Number(postParams?.userId),
-                categoryId: Number(postParams?.categoryId)
+                categoryId: Number(postParams?.categoryId),
             },
-        })
+        });
 
-        // Verifica si el usuario fue encontrado
-        if (!updateExpense) {
-            return new Response(JSON.stringify({ error: "Operacion fallida" }), {
-                status: 400,
-            });
-        }
-
-        // Responder con el usuario encontrado
         return new Response(JSON.stringify({
             data: {
-                expense: updateExpense
+                expense: updateExpense,
             },
-            message: "Gasto " + updateExpense.id + " actualizado con éxito",
+            message: `Gasto ${updateExpense.id} actualizado con éxito`,
         }), {
             status: 200,
             headers: { "Content-Type": "application/json" },
@@ -45,11 +36,11 @@ export async function POST(request, { params }) {
 
     } catch (error) {
         return new Response(JSON.stringify({
+            message: "Error al actualizar el gasto",
             error: error?.message,
-            message: "Error al actualizar el gasto"
-        }
-        ), {
+        }), {
             status: 500,
         });
     }
 }
+

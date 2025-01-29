@@ -1,9 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
-export default function EditarGastoPage({params} ) {
+export default function EditarGastoPage() {
   const router = useRouter();
+  const params = useParams(); // Obtener los parámetros dinámicos
   const [monto, setMonto] = useState("");
   const [fecha, setFecha] = useState("");
   const [tipo, setTipo] = useState("");
@@ -21,7 +22,7 @@ export default function EditarGastoPage({params} ) {
     }
   }, [params.expenseId]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const body = { monto, fecha, tipo };
 
@@ -48,7 +49,9 @@ export default function EditarGastoPage({params} ) {
 
   return (
     <div className="p-6 bg-gray-900 min-h-screen text-white">
-      <h1 className="text-3xl font-bold mb-6">{params.expenseId === "nuevo" ? "➕ Agregar Gasto" : "✏️ Editar Gasto"}</h1>
+      <h1 className="text-3xl font-bold mb-6">
+        {params.expenseId === "nuevo" ? "➕ Agregar Gasto" : "✏️ Editar Gasto"}
+      </h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input

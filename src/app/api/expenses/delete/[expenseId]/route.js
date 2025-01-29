@@ -2,31 +2,27 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// Obtener todos los usuarios
+// Eliminar un gasto
 export async function GET(request, { params }) {
 
-    const paramObject = (await params);
-    const { expenseId } = paramObject; // aqui paraams es undefined
+    const { expenseId } = params;  // Accede directamente a expenseId
 
     try {
 
         const deleteExpense = await prisma.expense.delete({
             where: {
-                id: Number(expenseId),
+                id: Number(expenseId),  // Asegúrate de usar el expenseId
             },
-        })
+        });
 
-        // Verifica si el usuario fue encontrado
         if (!deleteExpense) {
             return new Response(JSON.stringify({ error: "Operacion fallida" }), {
                 status: 400,
             });
         }
 
-        // Responder con el usuario encontrado
         return new Response(JSON.stringify({
-            data: {
-            },
+            data: {},
             message: "Gasto " + expenseId + " eliminada con éxito",
         }), {
             status: 200,
