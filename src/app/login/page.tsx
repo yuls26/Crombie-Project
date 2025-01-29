@@ -69,7 +69,9 @@ export default function LoginPage() {
       <p className="mt-6 text-center text-gray-400">O inicia sesión con:</p>
 
       <button
-        onClick={() => signIn("github")}
+        onClick={() => signIn("github", {
+          callbackUrl: '/dashboard'
+        })}
         className="mt-4 px-8 py-3 bg-blue-500 rounded-lg text-white font-semibold hover:bg-blue-600 transition-colors duration-200"
       >
         GitHub

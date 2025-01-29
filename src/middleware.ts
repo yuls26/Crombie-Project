@@ -25,6 +25,7 @@ export function middleware(request: NextRequest) {
 export const config = {
     matcher: [
         "/test",
-        "/main"
+        "/main",
+        "/dashboard"
     ],
 };
