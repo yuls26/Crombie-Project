@@ -34,7 +34,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white px-6 py-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-800 text-white" style={{
+      margin: 0
+      
+    }}>
       <div className="flex justify-center w-full max-w-sm bg-gray-700 p-8 rounded-lg shadow-lg space-y-6">
         <form onSubmit={handleLogin} className="flex flex-col space-y-4 w-full">
           <h1 className="text-3xl font-bold mb-6 text-center text-gray-100">Iniciar Sesión</h1>
@@ -62,6 +65,13 @@ export default function LoginPage() {
             className="bg-blue-600 px-6 py-3 rounded-lg text-white font-semibold hover:bg-blue-700 transition-colors duration-200"
           >
             Iniciar Sesión
+          </button>
+          <button
+            type="button"
+            className="bg-blue-600 px-6 py-3 rounded-lg text-white font-semibold hover:bg-blue-700 transition-colors duration-200"
+            onClick={() => router.push('login/createUser')}
+          >
+            Crear Usuario
           </button>
         </form>
       </div>

@@ -1,15 +1,27 @@
 import { PrismaClient } from "@prisma/client";
-// import { NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-// Obtener todos los usuarios
-export async function POST(request, { params }) {
-
-    const postParams = await request.json()
-
+export async function POST(request) {
+    const postParams = await request.json();
+    console.log(postParams);
     try {
+        // Verificar si el usuario ya existe por email
+        const existingUser = await prisma.user.findUnique({
+            where: { email: postParams?.email }
+        });
 
+        if (existingUser) {
+            return new Response(JSON.stringify({
+                error: "El usuario ya existe",
+                message: "Ya existe un usuario registrado con este email",
+            }), {
+                status: 400,
+                headers: { "Content-Type": "application/json" },
+            });
+        }
+
+        // Crear usuario solo si no existe
         const user = await prisma.user.create({
             data: {
                 email: postParams?.email || '',
@@ -17,33 +29,25 @@ export async function POST(request, { params }) {
                 password: postParams?.password || '12345',
                 role: postParams?.role || undefined
             },
-        })
+        });
 
-        // Verifica si el usuario fue encontrado
-        if (!user) {
-            return new Response(JSON.stringify({ error: "Operacion fallida" }), {
-                status: 400,
-            });
-        }
-
-        // Responder con el usuario encontrado
         return new Response(JSON.stringify({
-            data: {
-                user: user
-            },
-            message: "Usuario " + user.id + " creado con éxito",
+            data: { user },
+            message: `Usuario ${user.id} creado con éxito`,
         }), {
-            status: 200,
+            status: 201, // Código 201 indica creación exitosa
             headers: { "Content-Type": "application/json" },
         });
 
     } catch (error) {
+        console.error("Error al crear usuario:", error);
+
         return new Response(JSON.stringify({
             error: error?.message,
-            message: "Error al crear el usuario"
-        }
-        ), {
+            message: "Error al crear el usuario",
+        }), {
             status: 500,
+            headers: { "Content-Type": "application/json" },
         });
     }
 }

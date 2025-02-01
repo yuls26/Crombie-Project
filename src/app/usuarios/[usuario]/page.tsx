@@ -1,67 +1,121 @@
-'use client';
-
-// app/usuarios/[usuario]/page.tsx
+'use client'
 
 import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import Filters from '../../components/Filter';
-import { fetchExpenses } from '../../services/services';  // Asumiendo que tienes un servicio para obtener los gastos
+import NavBar from '@/app/components/navBar';
+import PieChart from '@/app/components/PieChart';
+import { getAllExpensesByUser } from '@/serverFunctions/expenses';
+import { getUserById } from '@/serverFunctions/user';
+import { getCategoryById } from '@/serverFunctions/categories';
+import { Category } from '@prisma/client';
+import { getCategories } from '@/app/services/api';
+import { Button } from 'antd';
 
-interface UserPageProps {
-  params: {
-    usuario: string;
-  };
-}
 
-interface ExpenseInterface {
-  id: number,
-  amount: number,
-  description: string,
-  date: Date | undefined,
-  userId: number,
-  categoryId: number
-}
+const UserPage = () => {
+  const { usuario } = useParams();
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const [expenses, setExpenses] = useState<any>([]);
+  const [userData, setUserData] = useState<any>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('1');
 
-const UserPage = ({ params }: UserPageProps) => {
-  const [expenses, setExpenses] = useState(Array<ExpenseInterface>);
-  const [filters, setFilters] = useState({
-    category: '',
-    startDate: '',
-    endDate: '',
-  });
+  const userId = Array.isArray(usuario) ? usuario[0] : usuario; // Asegurar que usuario es un string
 
-  // Función para manejar los cambios en los filtros
-  const handleFilterChange = (newFilters: { category: string; startDate: string; endDate: string }) => {
-    setFilters(newFilters);
-  };
-
-  // Fetch de los gastos con los filtros
   useEffect(() => {
-    const getExpenses = async () => {
-      const response = await fetchExpenses(filters);
-      let a = response.map(e =>
-        e as unknown as ExpenseInterface
-      );
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
 
-      setExpenses(a);
+  useEffect(() => {
+    const loadCategories = async () => {
+      const fetchedCategories = await getCategories();
+      setCategories(fetchedCategories);
     };
-    getExpenses();
-  }, [filters]);
+
+    const getCategoryAsync = async (id: string) => {
+      const res = await getCategoryById(id);
+      return res.name;
+    };
+
+    const getExpensesAsync = async (user: any) => {
+      const res = await getAllExpensesByUser(user);
+
+      const expensesWithCategory = await Promise.all(
+        res.map(async (expense: any) => {
+          let expenseAux = { ...expense };
+          expenseAux.category = await getCategoryAsync(expense?.categoryId);
+          return expenseAux;
+        })
+      );
+      setExpenses(expensesWithCategory);
+    };
+
+    const fetchData = async () => {
+      if (!userId || !session) return;
+
+      try {
+        // Obtener usuario
+        const resDataUser = await getUserById(userId);
+        getExpensesAsync(resDataUser);
+        loadCategories();
+
+        setUserData(resDataUser);
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+      }
+    };
+
+    if (!userData) {
+      fetchData();
+    }
+  }, [userId, session, userData, expenses]);
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold">Gastos de {params.usuario}</h1>
+    <div className="text-center bg-gray-800 text-white min-h-screen">
+      <h1 className="text-3xl font-bold">Gastos del usuario {userData?.name}</h1>
+      <p>Email: <b>{userData?.email}</b></p>
 
-      {/* Agregar el componente de filtros */}
-      <Filters onFilterChange={handleFilterChange} />
+      <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', alignContent: 'center' }}>
+        <div style={{ maxWidth: 300 }}>
+          <PieChart expenses={expenses} />
+        </div>
+      </div>
 
-      {/* Mostrar los gastos filtrados */}
-      <ul>
-        {expenses.map((expense) => (
-          <li key={expense.id}>
-            <p>{expense?.description} - ${expense?.amount}</p>
-          </li>
-        ))}
-      </ul>
+      <div style={{
+        marginTop: 20,
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        alignContent: 'center',
+        gap: 20
+      }}>
+        <select
+          style={{
+            backgroundColor: '#1F2937',
+            padding: 5,
+            border: '2px solid rgb(53, 55, 58)',
+            borderRadius: 7
+          }}
+          value={selectedCategoryId}
+          onChange={(e) => setSelectedCategoryId(e.target.value)}
+        >
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+        <Button type="primary" onClick={() => {
+          router.push(`${userData.id}/categorias/${selectedCategoryId}`)
+        }}>Buscar gastos por categoria</Button>
+      </div>
+
+      <NavBar />
     </div>
   );
 };

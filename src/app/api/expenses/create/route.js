@@ -20,6 +20,8 @@ export async function POST(request, { params }) {
             },
         })
 
+
+        console.log('newExpense: ', expense);
         // Verifica si el usuario fue encontrado
         if (!expense) {
             return new Response(JSON.stringify({ error: "Operacion fallida" }), {

@@ -31,27 +31,60 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({ categories, onSave }) => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Descripción del gasto"
-            />
-            <input
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="Monto"
-            />
-            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
-                <option value="">Seleccionar categoría</option>
-                {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                        {category.name}
-                    </option>
-                ))}
-            </select>
-            <button type="submit">Guardar</button>
+            <div style={{display: 'flex', flexWrap: 'wrap', gap: 20}}>
+                <input
+                    type="text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Descripción del gasto"
+                    style={{
+                        backgroundColor: '#1F2937',
+                        padding: 5,
+                        border: '2px solid rgb(53, 55, 58)',
+                        borderRadius: 7
+                    }}
+                />
+                <input
+                    style={{
+                        backgroundColor: '#1F2937',
+                        padding: 5,
+                        border: '2px solid rgb(53, 55, 58)',
+                        borderRadius: 7
+                    }}
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="Monto"
+                />
+                <select
+                    style={{
+                        backgroundColor: '#1F2937',
+                        padding: 5,
+                        border: '2px solid rgb(53, 55, 58)',
+                        borderRadius: 7
+                    }}
+                    value={categoryId}
+                    onChange={(e) => setCategoryId(e.target.value)}
+                >
+                    <option value="">Seleccionar categoría</option>
+                    {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                            {category.name}
+                        </option>
+                    ))}
+                </select>
+                <button
+                    type="submit"
+                    style={{
+                        backgroundColor: '#2563EB',
+                        padding: '5px 10px',
+                        border: '2px solid rgb(53, 55, 58)',
+                        borderRadius: 7
+                    }}
+                >
+                    Guardar
+                </button>
+            </div>
         </form>
     );
 };

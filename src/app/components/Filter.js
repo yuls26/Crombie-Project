@@ -1,5 +1,7 @@
 // components/Filters.js
 
+'use client';  // Directiva para indicar que este es un componente del cliente
+
 import React, { useState } from 'react';
 
 const Filters = ({ onFilterChange }) => {

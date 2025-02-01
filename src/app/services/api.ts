@@ -80,6 +80,7 @@ export const getExpensesByUser = async (id: number): Promise<Expense[]> => {
 };
 
 export const createExpense = async (expense: Omit<Expense, 'id'>): Promise<Expense> => {
+    
     const response = await fetch(`${API_URL}/expenses/create`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
